@@ -8,7 +8,6 @@
   <body>
     <h1>RTSP Streaming API</h1>
 
-    <!-- Create a container for displaying video streams -->
     <div id="video-container">
       <img id="video-feed-0" src="" alt="Video Feed 0" />
       <img id="video-feed-1" src="" alt="Video Feed 1" />
@@ -17,29 +16,17 @@
     </div>
 
     <script>
-      // Establish WebSocket connection
-      // Get the current protocol (http or https) and host
-      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-      const host = window.location.host;
+      const socket = new WebSocket(`ws://${window.location.host}/ws/router/`);
 
-      // Construct the WebSocket URL using the current protocol and host
-      const socketUrl = `${protocol}//${host}/ws/router/`;
-
-      // Create the WebSocket connection
-      const socket = new WebSocket(socketUrl);
-
-      // Handle incoming messages (video frames)
       socket.onmessage = (event) => {
-        // Parse the message to extract the camera identifier and frame data
+        // Message is split as {camera_id}:{base64_image} 
         const messageParts = event.data.split(":");
         const cameraId = messageParts[0];
         const frameData = messageParts[1];
 
-        // Get the HTML element corresponding to the camera identifier
         const videoFeedId = `video-feed-${cameraId}`;
         const imageElement = document.getElementById(videoFeedId);
 
-        // Set the image source to the received frame
         imageElement.src = `data:image/jpeg;base64,${frameData}`;
       };
     </script>
