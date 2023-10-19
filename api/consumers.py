@@ -1,9 +1,8 @@
 import asyncio
-import cv2
-import threading
 from channels.generic.websocket import AsyncWebsocketConsumer
 
-from .scripts.utility import getRTSPUrls, generateImagePacket
+from api.classes import Camera
+from api.scripts.utility import getRTSPUrls, generateImagePacket
 
 
 class VideoConsumer(AsyncWebsocketConsumer):
@@ -18,7 +17,7 @@ class VideoConsumer(AsyncWebsocketConsumer):
             "http://pendelcam.kip.uni-heidelberg.de/mjpg/video.mjpg",
         ]
 
-        self.cameras = [VideoCamera(url) for url in urls]
+        self.cameras = [Camera(url) for url in urls]
         camera_ids = range(len(self.cameras))
 
         try:
@@ -38,30 +37,3 @@ class VideoConsumer(AsyncWebsocketConsumer):
                     await self.send(message)
         except asyncio.CancelledError:
             pass
-
-
-class VideoCamera(object):
-    def __init__(self, url):
-        self.cap = cv2.VideoCapture(url)
-        (self.ret, self.frame) = self.cap.read()
-        threading.Thread(target=self.update, args=()).start()
-
-    def __del__(self):
-        self.cap.release()
-
-    def get_fps(self):
-        cap = self.cap
-        return cap.get(cv2.CAP_PROP_FPS)
-
-    def get_frame(self):
-        frame = self.frame
-        ret = self.ret
-        cap = self.cap
-
-        if ret:
-            _, jpg = cv2.imencode(".jpg", frame)
-            return jpg
-
-    def update(self):
-        while True:
-            (self.ret, self.frame) = self.cap.read()
