@@ -4,16 +4,25 @@ import base64
 
 def getRTSPUrls(route):
     """
-    Generates RTSP URLs based on IP Camera documentation and credentials
+    Generates RTSP URLs based on the IP Camera documentation and credentials.
 
-    :param route: Route to .json file with camera data
-    :returns: RTSP URLs
+    This function takes in the route to a .json file containing camera data. It reads the file, extracts the necessary information such as MAC address, IP address, and password for each camera, and generates RTSP URLs based on the provided data.
+
+    Args:
+        route (str): Route to the .json file with camera data.
+
+    Returns:
+        list: A list of RTSP URLs generated based on the camera data.
     """
+    # Open the .json file containing camera data
     camera_file = open(route)
+
+    # Load the camera data from the .json file
     data = json.load(camera_file)["data"]
 
     urls = []
 
+    # Iterate through each camera's data and create the corresponding RTSP URL
     for camera in data:
         mac = camera["mac"]
         ip = camera["ip"]
