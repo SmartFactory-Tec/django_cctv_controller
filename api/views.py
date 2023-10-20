@@ -3,8 +3,8 @@ from django.views.decorators import gzip
 from django.http import StreamingHttpResponse
 
 from rest_framework import generics
-from .serializers import PersonSerializer
-from .models import Person
+from api.serializers import PersonSerializer
+from api.models import Person
 
 from datetime import datetime
 

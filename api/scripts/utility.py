@@ -52,7 +52,7 @@ def generateImagePacket(*, frame, camera_id, resolution=None, timestamp=None, fp
     :type timestamp: str or None
 
     :param fps: (Optional) Frames per second of the video capture.
-    : type fps: float or None
+    :type fps: float or None
 
     :return: A JSON string containing the image packet information.
     :rtype: str
