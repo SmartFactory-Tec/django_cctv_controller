@@ -26,7 +26,7 @@ class VideoConsumer(AsyncWebsocketConsumer):
         try:
             while True:
                 # Asynchronous sleep to control the pace of the loop
-                await asyncio.sleep(0.1)
+                await asyncio.sleep(1 / 25)
 
                 # Iterate through the camera IDs and corresponding camera objects
                 for camera_id, camera in zip(camera_ids, self.cameras):

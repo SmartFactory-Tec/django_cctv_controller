@@ -57,16 +57,19 @@ def generateImagePacket(*, frame, camera_id, resolution=None, timestamp=None, fp
     :return: A JSON string containing the image packet information.
     :rtype: str
     """
-    packet = {
-        "camera_id": camera_id,
-        "frame": base64.b64encode(frame).decode(),
-    }
+    try:
+        packet = {
+            "camera_id": camera_id,
+            "frame": base64.b64encode(frame).decode(),
+        }
 
-    if timestamp is not None:
-        packet["timestamp"] = timestamp
-    if resolution is not None:
-        packet["resolution"] = resolution
-    if fps is not None:
-        packet["fps"] = fps
+        if timestamp is not None:
+            packet["timestamp"] = timestamp
+        if resolution is not None:
+            packet["resolution"] = resolution
+        if fps is not None:
+            packet["fps"] = fps
 
-    return json.dumps(packet)
+        return json.dumps(packet)
+    except:
+        return None

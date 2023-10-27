@@ -1,5 +1,6 @@
 import cv2
 import threading
+import numpy as np
 
 
 class Camera(object):
