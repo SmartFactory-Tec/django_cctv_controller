@@ -12,3 +12,18 @@ class Person(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+
+
+class Camera(models.Model):
+    camera_id = models.IntegerField(unique=True)
+    camera_url = models.CharField(max_length=500, blank=True)
+    password = models.CharField(null=True, max_length=500)
+    camera_name = models.CharField(null=True, max_length=500, unique=True)
+    camera_location = models.CharField(null=True, max_length=500)
+
+    def save(self, *args, **kwargs):
+        self.camera_url = f"ws://127.0.0.1:8000/ws/stream/{self.camera_id}"
+        super(Camera, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.camera_id} - {camera_name} - {camera_url}"

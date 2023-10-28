@@ -4,7 +4,8 @@ from django.http import StreamingHttpResponse
 
 from rest_framework import generics
 from api.serializers import PersonSerializer
-from api.models import Person
+from api.serializers import CameraSerializer
+from api.models import Person, Camera
 
 from datetime import datetime
 
@@ -28,3 +29,8 @@ def main(request):
 class PersonView(generics.ListAPIView):
     queryset = Person.objects.all()
     serializer_class = PersonSerializer
+
+
+class CameraView(generics.ListCreateAPIView):
+    queryset = Camera.objects.all()
+    serializer_class = CameraSerializer

@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "api.apps.ApiConfig",
     "rest_framework",
     "channels",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
@@ -40,7 +41,9 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
 ]
+
 
 ROOT_URLCONF = "cctv_controller.urls"
 
@@ -67,6 +70,10 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels.layers.InMemoryChannelLayer",
     },
 }
+
+# Cors Settings
+ALLOWED_HOSTS = ["*"]
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Celery
 CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
