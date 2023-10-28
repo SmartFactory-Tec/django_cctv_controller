@@ -23,7 +23,9 @@ application = ProtocolTypeRouter(
             AuthMiddlewareStack(
                 URLRouter(
                     [
-                        re_path(r"ws/router/$", VideoConsumer.as_asgi()),
+                        re_path(
+                            r"ws/router/(?P<camera_id>\w+)/$", VideoConsumer.as_asgi()
+                        )
                     ]
                 )
             )
