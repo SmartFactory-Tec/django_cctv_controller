@@ -5,7 +5,15 @@ from .models import Person, Camera
 class PersonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Person
-        fields = ("id", "first_name", "last_name", "tec_id", "created_at")
+        fields = (
+            "first_name",
+            "last_name",
+            "email",
+            "tec_id",
+            "major",
+            "phone_number",
+            "created_at",
+        )
 
 
 class CameraSerializer(serializers.ModelSerializer):
