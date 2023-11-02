@@ -14,7 +14,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cctv_controller.settings")
 
 django.setup()
 
-from api.consumers import VideoConsumer
+from api.consumers import StreamConsumer
 
 application = ProtocolTypeRouter(
     {
@@ -24,7 +24,7 @@ application = ProtocolTypeRouter(
                 URLRouter(
                     [
                         re_path(
-                            r"ws/stream/(?P<camera_id>\w+)/$", VideoConsumer.as_asgi()
+                            r"ws/stream/(?P<camera_id>\w+)/$", StreamConsumer.as_asgi()
                         )
                     ]
                 )

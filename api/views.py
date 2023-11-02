@@ -14,6 +14,7 @@ from datetime import datetime
 import cv2
 import threading
 import json
+import time
 
 
 @gzip.gzip_page
@@ -23,8 +24,6 @@ def main(request):
 
 @csrf_exempt
 def camera_request_handler(request, record_id=None):
-    print(f"Handling request: {str(request)} at {datetime.now()}")
-
     if request.method == "GET":
         if record_id is not None:
             try:
@@ -35,6 +34,7 @@ def camera_request_handler(request, record_id=None):
                     "camera_location": record.camera_location,
                     "camera_name": record.camera_name,
                     "camera_url": record.camera_url,
+                    "camera_status": record.camera_status,
                 }
 
                 return JsonResponse({"data": serialized_record}, status=200)
@@ -52,6 +52,7 @@ def camera_request_handler(request, record_id=None):
                     "camera_location": record.camera_location,
                     "camera_name": record.camera_name,
                     "camera_url": record.camera_url,
+                    "camera_status": record.camera_status,
                 }
                 for record in all_records
             ]
@@ -81,9 +82,15 @@ def camera_request_handler(request, record_id=None):
             data = json.loads(request.body)
 
             record = Camera.objects.get(camera_id=record_id)
-            record.camera_location = data["camera_location"]
-            record.camera_name = data["camera_name"]
-            record.camera_url = data["camera_url"]
+
+            if "camera_location" in data:
+                record.camera_location = data["camera_location"]
+            if "camera_name" in data:
+                record.camera_name = data["camera_name"]
+            if "camera_url" in data:
+                record.camera_url = data["camera_url"]
+            if "camera_status" in data:
+                record.camera_status = data["camera_status"]
 
             record.save()
 
@@ -114,8 +121,6 @@ def camera_request_handler(request, record_id=None):
 
 @csrf_exempt
 def people_request_handler(request, record_id=None):
-    print(f"Handling request: {str(request)} at {datetime.now()}")
-
     if request.method == "GET":
         if record_id is not None:
             try:
@@ -182,7 +187,7 @@ def people_request_handler(request, record_id=None):
             data = json.loads(request.body)
 
             record = Person.objects.get(id=record_id)
-            
+
             record.first_name = data["first_name"]
             record.last_name = data["last_name"]
             record.email = data["email"]

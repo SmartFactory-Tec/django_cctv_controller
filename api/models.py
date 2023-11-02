@@ -20,10 +20,7 @@ class Camera(models.Model):
     password = models.CharField(null=True, max_length=500)
     camera_name = models.CharField(null=True, max_length=500, unique=True)
     camera_location = models.CharField(null=True, max_length=500)
-
-    def save(self, *args, **kwargs):
-        self.camera_url = f"ws://127.0.0.1:8000/ws/stream/{self.camera_id}"
-        super(Camera, self).save(*args, **kwargs)
+    camera_status = models.CharField(null=True, max_length=500)
 
     def __str__(self):
         return f"{self.camera_id} - {camera_name} - {camera_url}"

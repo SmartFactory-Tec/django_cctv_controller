@@ -15,7 +15,7 @@ application = ProtocolTypeRouter(
                 URLRouter(
                     [
                         re_path(
-                            r"ws/stream/(?P<camera_id>\w+)/$", VideoConsumer.as_asgi()
+                            r"ws/stream/(?P<camera_id>\w+)/$", StreamConsumer.as_asgi()
                         ),
                     ]
                 )
