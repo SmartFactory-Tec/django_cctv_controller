@@ -1,6 +1,7 @@
 from channels.generic.websocket import WebsocketConsumer
 from threading import Thread
 from multiprocessing import shared_memory
+from api.models import Camera
 import json
 import time
 import cv2
@@ -44,8 +45,13 @@ class StreamConsumer(WebsocketConsumer):
                     if frame is not None:
                         _, jpg = cv2.imencode(".jpg", frame)
 
+                        record = Camera.objects.get(camera_id=self._camera_id)
+
                         packet = {
                             "camera_id": self._camera_id,
+                            "camera_name": record.camera_name,
+                            "camera_location": record.camera_location,
+                            "camera_url": record.camera_url,
                             "frame": base64.b64encode(jpg).decode(),
                             "fps": "Unknown",
                         }

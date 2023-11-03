@@ -8,13 +8,20 @@ from rest_framework import generics
 from api.serializers import PersonSerializer
 from api.serializers import CameraSerializer
 from api.models import Person, Camera
-
-from datetime import datetime
-
-import cv2
-import threading
-import json
-import time
+from api.scripts.people_utils import (
+    serialize_person_record,
+    serialize_person_records,
+    create_person_record,
+    update_person_record,
+    delete_person_record,
+)
+from api.scripts.camera_utils import (
+    serialize_camera_record,
+    serialize_camera_records,
+    create_camera_record,
+    update_camera_record,
+    delete_camera_record,
+)
 
 
 @gzip.gzip_page
@@ -28,74 +35,31 @@ def camera_request_handler(request, record_id=None):
         if record_id is not None:
             try:
                 record = Camera.objects.get(camera_id=record_id)
-
-                serialized_record = {
-                    "camera_id": record.camera_id,
-                    "camera_location": record.camera_location,
-                    "camera_name": record.camera_name,
-                    "camera_url": record.camera_url,
-                    "camera_status": record.camera_status,
-                }
-
+                serialized_record = serialize_camera_record(record)
                 return JsonResponse({"data": serialized_record}, status=200)
             except Camera.DoesNotExist:
                 return JsonResponse(
                     {"error": f"Record with id {record_id} does not exist"}, status=404
                 )
-
         else:
             all_records = Camera.objects.all()
-
-            serialized_records = [
-                {
-                    "camera_id": record.camera_id,
-                    "camera_location": record.camera_location,
-                    "camera_name": record.camera_name,
-                    "camera_url": record.camera_url,
-                    "camera_status": record.camera_status,
-                }
-                for record in all_records
-            ]
-
+            serialized_records = serialize_camera_records(all_records)
             return JsonResponse({"data": serialized_records}, status=200)
 
     elif request.method == "POST":
         try:
             data = json.loads(request.body)
-
-            new_record = Camera.objects.create(
-                camera_id=data["camera_id"],
-                camera_location=data["camera_location"],
-                camera_name=data["camera_name"],
-                camera_url=data["camera_url"],
-            )
-
+            new_record = create_camera_record(data)
             new_record.save()
-
             return JsonResponse({"message": "Record created successfully."}, status=201)
-
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data provided"}, status=400)
 
     elif request.method == "PUT":
         try:
             data = json.loads(request.body)
-
-            record = Camera.objects.get(camera_id=record_id)
-
-            if "camera_location" in data:
-                record.camera_location = data["camera_location"]
-            if "camera_name" in data:
-                record.camera_name = data["camera_name"]
-            if "camera_url" in data:
-                record.camera_url = data["camera_url"]
-            if "camera_status" in data:
-                record.camera_status = data["camera_status"]
-
-            record.save()
-
+            update_camera_record(record_id, data)
             return JsonResponse({"message": "Record updated successfully."}, status=200)
-
         except Camera.DoesNotExist:
             return JsonResponse(
                 {"error": f"Record with id {record_id} does not exist"}, status=404
@@ -105,11 +69,8 @@ def camera_request_handler(request, record_id=None):
 
     elif request.method == "DELETE":
         try:
-            record = Camera.objects.get(camera_id=record_id)
-            record.delete()
-
+            delete_camera_record(record_id)
             return JsonResponse({"message": "Record deleted successfully."}, status=200)
-
         except Camera.DoesNotExist:
             return JsonResponse(
                 {"error": f"Record with id {record_id} does not exist"}, status=404
@@ -125,80 +86,31 @@ def people_request_handler(request, record_id=None):
         if record_id is not None:
             try:
                 record = Person.objects.get(id=record_id)
-
-                serialized_record = {
-                    "id": record.id,
-                    "first_name": record.first_name,
-                    "last_name": record.last_name,
-                    "email": record.email,
-                    "tec_id": record.tec_id,
-                    "major": record.major,
-                    "phone_number": record.phone_number,
-                    "created_at": record.created_at,
-                }
-
-                return JsonResponse({"data": serialized_record}, status=200)
+                return JsonResponse(
+                    {"data": serialize_person_record(record)}, status=200
+                )
             except Person.DoesNotExist:
                 return JsonResponse(
                     {"error": f"Record with id {record_id} does not exist"}, status=404
                 )
-
         else:
-            all_records = Person.objects.all()
-
-            serialized_records = [
-                {
-                    "id": record.id,
-                    "first_name": record.first_name,
-                    "last_name": record.last_name,
-                    "email": record.email,
-                    "tec_id": record.tec_id,
-                    "major": record.major,
-                    "phone_number": record.phone_number,
-                    "created_at": record.created_at,
-                }
-                for record in all_records
-            ]
-
-            return JsonResponse({"data": serialized_records}, status=200)
+            return JsonResponse(
+                {"data": serialize_person_records(Person.objects.all())}, status=200
+            )
 
     elif request.method == "POST":
         try:
             data = json.loads(request.body)
-
-            new_record = Person.objects.create(
-                first_name=data["first_name"],
-                last_name=data["last_name"],
-                email=data["email"],
-                tec_id=data["tec_id"],
-                major=data["major"],
-                phone_number=data["phone_number"],
-            )
-
-            new_record.save()
-
+            new_record = create_person_record(data)
             return JsonResponse({"message": "Record created successfully."}, status=201)
-
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data provided"}, status=400)
 
     elif request.method == "PUT":
         try:
             data = json.loads(request.body)
-
-            record = Person.objects.get(id=record_id)
-
-            record.first_name = data["first_name"]
-            record.last_name = data["last_name"]
-            record.email = data["email"]
-            record.tec_id = data["tec_id"]
-            record.major = data["major"]
-            record.phone_number = data["phone_number"]
-
-            record.save()
-
+            update_person_record(record_id, data)
             return JsonResponse({"message": "Record updated successfully."}, status=200)
-
         except Person.DoesNotExist:
             return JsonResponse(
                 {"error": f"Record with id {record_id} does not exist"}, status=404
@@ -208,11 +120,8 @@ def people_request_handler(request, record_id=None):
 
     elif request.method == "DELETE":
         try:
-            record = Person.objects.get(id=record_id)
-            record.delete()
-
+            delete_person_record(record_id)
             return JsonResponse({"message": "Record deleted successfully."}, status=200)
-
         except Person.DoesNotExist:
             return JsonResponse(
                 {"error": f"Record with id {record_id} does not exist"}, status=404
