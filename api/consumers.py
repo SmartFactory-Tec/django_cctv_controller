@@ -1,12 +1,12 @@
 from channels.generic.websocket import WebsocketConsumer
-from threading import Thread
 from multiprocessing import shared_memory
 from api.models import Camera
+from threading import Thread
+import numpy as np
+import base64
 import json
 import time
 import cv2
-import numpy as np
-import base64
 
 
 class StreamConsumer(WebsocketConsumer):

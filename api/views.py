@@ -5,9 +5,7 @@ from django.http import StreamingHttpResponse
 from django.http import JsonResponse
 
 from rest_framework import generics
-from api.serializers import PersonSerializer
-from api.serializers import CameraSerializer
-from api.models import Person, Camera
+
 from api.scripts.people_utils import (
     serialize_person_record,
     serialize_person_records,
@@ -22,6 +20,11 @@ from api.scripts.camera_utils import (
     update_camera_record,
     delete_camera_record,
 )
+from api.serializers import PersonSerializer
+from api.serializers import CameraSerializer
+from api.models import Person, Camera
+
+import json
 
 
 @gzip.gzip_page
