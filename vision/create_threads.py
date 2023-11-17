@@ -5,6 +5,7 @@ import numpy as np
 import argparse
 import logging
 import random
+import django
 import signal
 import torch
 import time
@@ -18,11 +19,24 @@ from facial_recognition.commons.utils import (
     draw_box,
     draw_person_keypoints,
 )
+
 from storage_service import store_video_data
-from api import get_cameras, ping_cameras
+from vision_api import get_cameras, ping_cameras
 from gui import process_status_gui
 from config import Config
 from sort import Sort
+
+### Django Imports
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(BASE_DIR)
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cctv_controller.settings")
+django.setup()
+
+from api.models import Person, Camera
+
+records = Camera.objects.all()
+for record in records:
+    print(record)
 
 
 # Lambda function for generating shared memory stream names based on index

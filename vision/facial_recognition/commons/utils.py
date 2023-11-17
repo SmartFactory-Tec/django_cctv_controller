@@ -125,6 +125,8 @@ def draw_box(frame, box, color=(0, 255, 0), thickness=1):
     x1, y1, x2, y2 = box
     cv2.rectangle(frame, (x1, y1), (x2, y2), color, thickness)
 
+    return frame
+
 
 def run_facial_recognition_pipeline(frame):
     """Runs the facial recognition pipeline on the given frame."""

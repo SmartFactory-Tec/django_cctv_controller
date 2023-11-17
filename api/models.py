@@ -23,4 +23,4 @@ class Camera(models.Model):
     camera_status = models.CharField(null=True, max_length=500)
 
     def __str__(self):
-        return f"{self.camera_id} - {camera_name} - {camera_url}"
+        return f"{self.camera_id} - {self.camera_name} - {self.camera_url}"

@@ -1,4 +1,24 @@
 import os
+import platform
+
+
+## TODO Change path according to environment
+def get_base_directory():
+    try:
+        # Check if the WSL_DISTRO_NAME environment variable is present
+        if "WSL2_GUI_APPS_ENABLED" in os.environ:
+            # If it is, assume it's WSL 2
+            return os.path.join("/mnt/c/", "django-cctv-controller")
+        else:
+            # Otherwise, it's a native Windows or Linux environment
+            return os.path.join("C:", "django-cctv-controller")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
+
+
+base_directory = os.path.join("/mnt/c/", "django-cctv-controller")
+os.makedirs(base_directory, exist_ok=True)
 
 
 class Config:
@@ -27,4 +47,7 @@ class Config:
     USERS_API_URL = f"http://localhost:8000/api/people/"
 
     # Path for the recognition database
-    RECOGNITION_DB_PATH = os.path.join("data", "db")
+    RECOGNITION_DB_PATH = os.path.join(base_directory, "data", "db")
+
+    # Base directory for storing video data
+    VIDEO_STORAGE_PATH = os.path.join(base_directory, "cctv_footage")

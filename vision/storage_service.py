@@ -29,10 +29,12 @@ def store_video_data(frames, camera_id, fps):
     Stores the segmented and compressed video data to the specified storage location or file system.
     """
     try:
-        storage_path = f"storage/camera_{camera_id}/"
         current_date = time.strftime("%Y-%m-%d")
         current_time = time.strftime("%H-%M-%S")
         filename = f"video_{current_date}_{current_time}.mp4"
+        storage_path = os.path.join(
+            Config.VIDEO_STORAGE_PATH, f"camera_{camera_id}", filename
+        )
 
         logging.info(
             f"Storing video data for stream {camera_id} at: {storage_path + filename}"
